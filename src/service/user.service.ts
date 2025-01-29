@@ -42,8 +42,20 @@ class UserService {
         }
     }
 
-    private static async getUserByEmail(email: string) {
+    public static async getUserById(id: string) {
+        return await prismaClient.user.findUnique({ where: { id } })
+    }
+
+    public static async getUserByEmail(email: string) {
         return await prismaClient.user.findUnique({ where: { email } })
+    }
+
+    private static generateJwtToken(id: string, email: string) {
+        return Jwt.sign({ id: id, email: email }, JWT_SECRET);
+    }
+
+    public static verifyJwtToken(token: string) {
+        return Jwt.verify(token, JWT_SECRET);
     }
 
     public static async getUserToken(payload: GetUserTokenPayload) {
@@ -54,7 +66,7 @@ class UserService {
         const hashedPassword = UserService.generateHashPassword(user.salt, password);
         if (hashedPassword !== user.password)
             throw new Error(`Password does not match`);
-        return Jwt.sign({ id: user.id, email: email }, JWT_SECRET);
+        return UserService.generateJwtToken(user.id, email);
     }
 }
 

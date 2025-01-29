@@ -5,6 +5,11 @@ export const queries = {
     sayHello: (_: any, { name }: { name: string }) => `Hello ${name} how are you`,
     getUserToken: async (_: any, payload: GetUserTokenPayload) => {
         return await UserService.getUserToken(payload);
+    },
+    getCurrentLoggedInUser: (_: any, param: any, context: any) => {
+        if (context)
+            return UserService.getUserById(context.user.id);
+        throw new Error("error occured")
     }
 };
 export const mutations = {
