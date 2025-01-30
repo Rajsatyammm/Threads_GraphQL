@@ -21,6 +21,16 @@ model User {
   email           String  @unique
   password        String
   salt            String
+  Post            Post[]
 
   @@map("users")
+}
+
+model Post {
+  postId  String @id @default(uuid()) @map("post_id")
+  content String
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String
+
+  @@map("posts")
 }
